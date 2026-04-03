@@ -8,33 +8,17 @@ let isAdmin = false;
 
 /* IMAGE DATA */
 let images = [
-    {url:"images/PPOT/P9.jpg", category:"portrait"},
-    {url:"images/PPOT/P8.jpg", category:"portrait"},
-    {url:"images/PPOT/P7.jpg", category:"portrait"},
-    {url:"images/PPOT/P6.jpg", category:"portrait"},
-    {url:"images/PPOT/P5.jpg", category:"portrait"},
-    {url:"images/PPOT/P4.jpg", category:"portrait"},
-    {url:"images/PPOT/P3.jpg", category:"portrait"},
-    {url:"images/PPOT/P2.jpg", category:"portrait"},
+
     {url:"images/PPOT/P1.jpg", category:"portrait"},
 
-    {url:"images/KMISC/K10.jpg", category:"others"},
-    {url:"images/KMISC/K9.jpg", category:"others"},
-    {url:"images/KMISC/K8.jpg", category:"others"},
-    {url:"images/KMISC/K7.jpg", category:"others"},
-    {url:"images/KMISC/K6.jpg", category:"others"},
-    {url:"images/KMISC/K5.jpg", category:"others"},
     {url:"images/KMISC/K4.jpg", category:"others"},
-    {url:"images/KMISC/K3.jpg", category:"others"},
+ 
     {url:"images/KMISC/K2.jpg", category:"others"},
-    {url:"images/KMISC/K1.jpg", category:"others"},
 
-    {url:"images/MPET/M7.jpg", category:"pet"},
+
     {url:"images/MPET/M6.jpg", category:"pet"},
-    {url:"images/MPET/M5.jpg", category:"pet"},
-    {url:"images/MPET/M4.jpg", category:"pet"},
+    
     {url:"images/MPET/M3.jpg", category:"pet"},
-    {url:"images/MPET/M1.jpg", category:"pet"},
     {url:"images/MPET/M2.jpg", category:"pet"}
 ];
 
