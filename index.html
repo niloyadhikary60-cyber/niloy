@@ -4,37 +4,88 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Niloy Photography</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
-#viewer {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-#viewer.active {
-    display: flex !important;
-    opacity: 1;
-}
-#viewer img {
-    max-width: 90vw;
-    max-height: 90vh;
-    object-fit: contain;
-    transition: none !important;
-    cursor: grab;
-    user-select: none;
-    -webkit-user-drag: none;
+
+/* RESET */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: #fff;
 }
 
-/* ADMIN UI */
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+    background: #111;
+}
+
+.hero h1 {
+    font-size: 40px;
+    margin: 0;
+}
+
+.hero p {
+    opacity: 0.7;
+}
+
+/* ADMIN MENU */
 .admin-menu {
     position: absolute;
     top: 15px;
     left: 15px;
     font-size: 24px;
     cursor: pointer;
+}
+
+/* PORTFOLIO */
+#portfolio {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.filters button {
+    margin: 5px;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    background: #222;
     color: white;
 }
 
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.photo {
+    position: relative;
+}
+
+.photo img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: none;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* ADMIN PANEL */
 .admin-overlay {
     position: fixed;
     width: 100%;
@@ -54,20 +105,47 @@
     padding: 20px;
     border-radius: 10px;
     z-index: 1000;
-    color: white;
 }
 
-.delete-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
+/* VIEWER */
+#viewer {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
     display: none;
-    background: red;
-    color: white;
-    border: none;
+    justify-content: center;
+    align-items: center;
+}
+
+#viewer.active {
+    display: flex;
+}
+
+#viewer img {
+    max-width: 90vw;
+    max-height: 90vh;
+    cursor: grab;
+}
+
+.nav-btn {
+    position: absolute;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+#prev { left: 20px; }
+#next { right: 20px; }
+
+#close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 25px;
     cursor: pointer;
 }
-.photo { position: relative; }
+
 </style>
 </head>
 
@@ -96,7 +174,7 @@
 
 <section id="about">
     <h2>About Me</h2>
-    <p>Photography, for me, is more than just taking pictures—it’s about freezing emotions in time...</p>
+    <p>Photography is about capturing moments and emotions.</p>
 </section>
 
 <section id="contact">
@@ -143,18 +221,8 @@ let isAdmin = false;
 
 /* IMAGE DATA */
 let images = [
-
     {url:"images/PPOT/P1.jpg", category:"portrait"},
-
-
     {url:"images/KMISC/K4.jpg", category:"others"},
-
-    {url:"images/KMISC/K2.jpg", category:"others"},
-
-
-
-    {url:"images/MPET/M6.jpg", category:"pet"},
-    {url:"images/MPET/M3.jpg", category:"pet"},
     {url:"images/MPET/M2.jpg", category:"pet"}
 ];
 
@@ -214,9 +282,9 @@ function logout(){
     updateAdminUI();
 }
 
-/* ✅ FIXED FOR GITHUB */
-async function addImage(){
-    alert("Upload not supported on GitHub Pages.\nAdd images manually to repository.");
+/* UPLOAD (STATIC LIMITATION) */
+function addImage(){
+    alert("Upload not supported on GitHub Pages");
 }
 
 /* DELETE */
@@ -231,15 +299,10 @@ function updateAdminUI(){
     });
 }
 
-/* VIEWER SYSTEM (UNCHANGED) */
-
+/* VIEWER */
 let current = 0;
-let scale = 1;
-let tx = 0, ty = 0;
-
-let isDragging = false;
-let startX = 0;
-let startY = 0;
+let scale = 1, tx = 0, ty = 0;
+let isDragging = false, startX = 0, startY = 0;
 
 const img = document.getElementById("viewer-img");
 const viewer = document.getElementById("viewer");
@@ -263,73 +326,48 @@ function nextImage(){
     current = (current + 1) % images.length;
     openImage(current);
 }
+
 function prevImage(){
     current = (current - 1 + images.length) % images.length;
     openImage(current);
 }
 
 function applyTransform(){
-    const rect = img.getBoundingClientRect();
-
-    const maxX = Math.max(0, (rect.width * scale - window.innerWidth) / 2);
-    const maxY = Math.max(0, (rect.height * scale - window.innerHeight) / 2);
-
-    tx = Math.min(maxX, Math.max(-maxX, tx));
-    ty = Math.min(maxY, Math.max(-maxY, ty));
-
     img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
 }
 
 img.addEventListener("wheel", (e) => {
     e.preventDefault();
-
-    if (e.deltaY < 0) scale += 0.1;
-    else scale -= 0.1;
-
-    scale = Math.max(1, Math.min(scale, 8));
-
-    if (scale === 1) {
-        tx = 0;
-        ty = 0;
-    }
-
+    scale += (e.deltaY < 0) ? 0.1 : -0.1;
+    scale = Math.max(1, Math.min(scale, 5));
+    if(scale === 1){ tx = 0; ty = 0; }
     applyTransform();
 });
 
 img.addEventListener("mousedown", (e) => {
-    if (scale <= 1) return;
-
+    if(scale <= 1) return;
     isDragging = true;
     startX = e.clientX;
     startY = e.clientY;
 });
 
 document.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-
+    if(!isDragging) return;
+    tx += e.clientX - startX;
+    ty += e.clientY - startY;
     startX = e.clientX;
     startY = e.clientY;
-
-    tx += dx;
-    ty += dy;
-
     applyTransform();
 });
 
-document.addEventListener("mouseup", () => {
-    isDragging = false;
-});
+document.addEventListener("mouseup", () => isDragging = false);
 
 viewer.addEventListener("click", (e) => {
-    if (e.target === viewer) closeImage();
+    if(e.target === viewer) closeImage();
 });
 
 document.addEventListener("keydown", (e) => {
     if (!viewer.classList.contains("active")) return;
-
     if (e.key === "ArrowRight") nextImage();
     if (e.key === "ArrowLeft") prevImage();
     if (e.key === "Escape") closeImage();
